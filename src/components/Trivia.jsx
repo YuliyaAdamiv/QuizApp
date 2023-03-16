@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 
 export default function Trivia({
   data,
-  setTimeout,
+  setStop,
   questionNumber,
   setQuestionNumber,
 }) {
@@ -12,12 +12,25 @@ export default function Trivia({
   useEffect(() => {
     setQuestion(data[questionNumber - 1]);
   }, [data, questionNumber]);
+  const delay = (duration, callback) => {
+    setTimeout(() => {
+      callback();
+    }, duration);
+  };
   const handlerClick = (a) => {
     setSelectedAnswer(a);
     setClassName('answer active');
-    setTimeout(() => {
-      setClassName(a.correct ? 'answer correct' : 'answer wrong');
-    }, 3000);
+    delay(3000, () =>
+      setClassName(a.correct ? 'answer correct' : 'answer wrong')
+    );
+    delay(6000, () => {
+      if (a.correct) {
+        setQuestionNumber((prev) => prev + 1);
+        setSelectedAnswer(null);
+      } else {
+        setStop(true);
+      }
+    });
   };
   return (
     <div className="trivia">
